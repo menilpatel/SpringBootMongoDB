@@ -1,6 +1,6 @@
 package com.springmongo.services;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,6 +34,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	public boolean checkUserExistOrNotByEmail(String email) {
 		return userRepository.existsByEmail(email);
+	}
+
+	public List<Users> getAllUsers() {
+		return userRepository.findAll();
 	}
 
 }
