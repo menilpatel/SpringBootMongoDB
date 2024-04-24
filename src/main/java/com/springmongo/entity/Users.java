@@ -12,6 +12,7 @@ public class Users {
 	String lastName;
 	String email;
 	String password;
+	String token;
 	Boolean isDeleted = false;
 	long createtimestamp = System.currentTimeMillis() / 1000L;
 	long updatetimestamp = System.currentTimeMillis() / 1000L;
@@ -86,6 +87,14 @@ public class Users {
 
 	public void setUpdatetimestamp(long updatetimestamp) {
 		this.updatetimestamp = updatetimestamp;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 }

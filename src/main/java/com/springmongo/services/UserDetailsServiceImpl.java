@@ -1,6 +1,7 @@
 package com.springmongo.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,7 +38,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	}
 
 	public List<Users> getAllUsers() {
-		return userRepository.findAll();
+		return userRepository.findByIsDeleted(false);
 	}
 
+	public Optional<Users> getUserById(String id) {
+		return userRepository.findById(id);
+	}
+
+	public Users deleteUserById(String id) {
+		Optional<Users> objUser = userRepository.findById(id);
+		if (objUser.isPresent()) {
+			objUser.get().setIsDeleted(true);
+			return saveUpdateUsers(objUser.get());
+		}
+		return null;
+	}
 }

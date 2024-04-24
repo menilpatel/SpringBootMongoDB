@@ -14,24 +14,25 @@ public class UserDetailsImpl implements UserDetails {
 
 	private String id;
 
-	private String firstname;
-	private String middlename;
-	private String lastname;
+	private String firstName;
+	private String middleName;
+	private String lastName;
 	private String email;
 	private Boolean isdeleted;
+	private String token;
 
 	@JsonIgnore
 	private String password;
 
 	private Collection<? extends GrantedAuthority> authorities;
 
-	public UserDetailsImpl(String id, String email, String firstname, String middlename, String lastname,
+	public UserDetailsImpl(String id, String email, String firstName, String middleName, String lastName,
 			String password, Boolean isdeleted) {
 		this.id = id;
 		this.email = email;
-		this.firstname = firstname;
-		this.middlename = middlename;
-		this.lastname = lastname;
+		this.firstName = firstName;
+		this.middleName = middleName;
+		this.lastName = lastName;
 		this.password = password;
 		this.isdeleted = isdeleted;
 	}
@@ -58,16 +59,32 @@ public class UserDetailsImpl implements UserDetails {
 		return email;
 	}
 
-	public String getFirstname() {
-		return firstname;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public String getLastname() {
-		return lastname;
+	public String getMiddleName() {
+		return middleName;
+	}
+
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
+
+	public String getLastName() {
+		return lastName;
 	}
 
 	public Boolean getisdeleted() {
 		return isdeleted;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	@Override

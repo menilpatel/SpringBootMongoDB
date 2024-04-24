@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.springmongo.entity.Users;
 import com.springmongo.response.ObjectResponse;
 import com.springmongo.security.JwtUtils;
+import com.springmongo.services.UserDetailsImpl;
 import com.springmongo.services.UserDetailsServiceImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -57,8 +59,10 @@ public class AuthController {
 					.authenticate(new UsernamePasswordAuthenticationToken(users.getEmail(), users.getPassword()));
 			if (authentication.isAuthenticated()) {
 				SecurityContextHolder.getContext().setAuthentication(authentication);
+				UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 				String jwt = jwtUtils.generateJwtToken(authentication);
-				return new ResponseEntity<ObjectResponse>(new ObjectResponse(200, true, "User login successfully", jwt),
+				userDetails.setToken(jwt);
+				return new ResponseEntity<ObjectResponse>(new ObjectResponse(200, true, "User login successfully", userDetails),
 						HttpStatus.OK);
 			} else {
 				return new ResponseEntity<ObjectResponse>(
