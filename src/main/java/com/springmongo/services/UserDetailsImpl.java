@@ -13,7 +13,7 @@ public class UserDetailsImpl implements UserDetails {
 	private static final long serialVersionUID = 1L;
 
 	private String id;
-
+	private String role;
 	private String firstName;
 	private String middleName;
 	private String lastName;
@@ -26,9 +26,10 @@ public class UserDetailsImpl implements UserDetails {
 
 	private Collection<? extends GrantedAuthority> authorities;
 
-	public UserDetailsImpl(String id, String email, String firstName, String middleName, String lastName,
+	public UserDetailsImpl(String id, String role, String email, String firstName, String middleName, String lastName,
 			String password, Boolean isdeleted) {
 		this.id = id;
+		this.role = role;
 		this.email = email;
 		this.firstName = firstName;
 		this.middleName = middleName;
@@ -42,8 +43,8 @@ public class UserDetailsImpl implements UserDetails {
 		// .map(role -> new SimpleGrantedAuthority(role.getName().name()))
 		// .collect(Collectors.toList());
 
-		return new UserDetailsImpl(user.getId(), user.getEmail(), user.getFirstName(), user.getMiddleName(),
-				user.getLastName(), user.getPassword(), user.getIsDeleted());
+		return new UserDetailsImpl(user.getId(), user.getRole(), user.getEmail(), user.getFirstName(),
+				user.getMiddleName(), user.getLastName(), user.getPassword(), user.getIsDeleted());
 	}
 
 	@Override
@@ -53,6 +54,14 @@ public class UserDetailsImpl implements UserDetails {
 
 	public String getId() {
 		return id;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	public String getEmail() {

@@ -7,11 +7,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Users {
 	@Id
 	private String id;
+	String role;
 	String firstName;
 	String middleName;
 	String lastName;
 	String email;
 	String password;
+	String image;
 	String token;
 	Boolean isDeleted = false;
 	long createtimestamp = System.currentTimeMillis() / 1000L;
@@ -23,6 +25,14 @@ public class Users {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	public String getFirstName() {
@@ -95,6 +105,14 @@ public class Users {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 }
