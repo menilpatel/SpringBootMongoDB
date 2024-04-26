@@ -21,12 +21,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		Users user = userRepository.findByEmailIgnoreCase(email);
-		if (user == null) {
+		Optional<Users> user = userRepository.findByEmailIgnoreCase(email);
+		if (user.isPresent()) {
 			new UsernameNotFoundException("User Not Found with email: " + email);
 		}
 
-		return UserDetailsImpl.build(user);
+		return UserDetailsImpl.build(user.get());
+	}
+
+	public Optional<Users> _getUserByEmailIgnoreCase(String email) {
+		return userRepository.findByEmailIgnoreCase(email);
 	}
 
 	public Users saveUpdateUsers(Users users) {

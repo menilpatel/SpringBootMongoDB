@@ -20,12 +20,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alpidibackend.exception.MyFileNotFoundException;
+
 @Service
 public class FileUploadServices {
 	@Value("")
 	private Path fileStorageLocation;
 
-	@Value("${upload.path}")
+	@Value("${server.base-url}")
 	private String uploadPath;
 
 	@PostConstruct
@@ -51,7 +53,7 @@ public class FileUploadServices {
 		}
 	}
 
-	public String uploadFile(MultipartFile file, String filename) {
+	public String uploadFile(MultipartFile file, String folder, String filename) {
 
 		Date date = new Date();
 
@@ -61,7 +63,7 @@ public class FileUploadServices {
 			if (fileName.contains("..")) {
 				System.out.println("Sorry! Filename contains invalid path sequence " + fileName);
 			}
-			String location = uploadPath + File.separator + filename;
+			String location = uploadPath + File.separator + folder;
 
 			this.fileStorageLocation = Paths.get(location).toAbsolutePath().normalize();
 
@@ -85,23 +87,20 @@ public class FileUploadServices {
 		}
 	}
 
-	public Resource loadFileAsResource(String fileName, String shopid, String listingid) {
+	public Resource loadFileAsResource(String fileName, String folder) {
 		try {
 
-			this.fileStorageLocation = Paths.get(uploadPath + File.separator + shopid + File.separator + listingid)
-					.toAbsolutePath().normalize();
+			this.fileStorageLocation = Paths.get(uploadPath + File.separator + folder).toAbsolutePath().normalize();
 
 			Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
 			Resource resource = new UrlResource(filePath.toUri());
 			if (resource.exists()) {
 				return resource;
 			} else {
-				System.out.println("File not found " + fileName);
-				return null;
+				throw new MyFileNotFoundException("File not found " + fileName);
 			}
 		} catch (MalformedURLException ex) {
-			System.out.println("File not found " + fileName + ex.getMessage());
-			return null;
+			throw new MyFileNotFoundException("File not found " + fileName, ex);
 		}
 	}
 }

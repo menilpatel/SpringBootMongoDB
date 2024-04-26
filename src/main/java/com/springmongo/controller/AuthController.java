@@ -1,7 +1,14 @@
 package com.springmongo.controller;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -9,6 +16,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,8 +71,8 @@ public class AuthController {
 				UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 				String jwt = jwtUtils.generateJwtToken(authentication);
 				userDetails.setToken(jwt);
-				return new ResponseEntity<ObjectResponse>(new ObjectResponse(200, true, "User login successfully", userDetails),
-						HttpStatus.OK);
+				return new ResponseEntity<ObjectResponse>(
+						new ObjectResponse(200, true, "User login successfully", userDetails), HttpStatus.OK);
 			} else {
 				return new ResponseEntity<ObjectResponse>(
 						new ObjectResponse(401, false, "Email password combination does not matched", null),
@@ -74,5 +83,4 @@ public class AuthController {
 					new ObjectResponse(401, false, "Email password combination doesnot matched", null), HttpStatus.OK);
 		}
 	}
-
 }
