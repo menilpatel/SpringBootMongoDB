@@ -1,10 +1,7 @@
 package com.springmongo.controller;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,6 +27,7 @@ import com.springmongo.security.JwtUtils;
 import com.springmongo.services.BlogsServices;
 import com.springmongo.services.FileUploadServices;
 import com.springmongo.services.UserDetailsServiceImpl;
+import com.springmongo.services._GlobalFunService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -44,11 +41,14 @@ public class BlogsController {
 
 	@Autowired
 	BlogsServices blogsServices;
+	
+	@Autowired
+	_GlobalFunService _globalFunService;
 
 	@Autowired
 	FileUploadServices fileUploadServices;
 
-	@GetMapping("/auth/getallblogs")
+	@GetMapping("/public/getallblogs")
 	public ResponseEntity<ObjectResponse> getAllBlogs() {
 		try {
 			return new ResponseEntity<ObjectResponse>(
@@ -91,12 +91,13 @@ public class BlogsController {
 			newBlog.setPublishedBy(publishedBy);
 			newBlog.setIsPublished(isPublished);
 			if (image != null) {
-				String imageresult = fileUploadServices.uploadFile(image, "blog", title.replace(" ", "_"));
+				String imageresult = fileUploadServices.uploadFile(image, "blog", _globalFunService.replaceSpCharAndSpace(title));
 				newBlog.setImage("/public/download/blog/" + imageresult);
 			}
 			return new ResponseEntity<ObjectResponse>(
 					new ObjectResponse(200, true, "Success", blogsServices._saveBlogDetails(newBlog)), HttpStatus.OK);
 		} catch (Exception ex) {
+			//System.out.println("addBlog : " + ex.getMessage());
 			return new ResponseEntity<ObjectResponse>(new ObjectResponse(500, false, "Something went wrong!", null),
 					HttpStatus.OK);
 		}
@@ -115,7 +116,7 @@ public class BlogsController {
 				objBlog.get().setPublishedBy(publishedBy);
 				objBlog.get().setIsPublished(isPublished);
 				if (image != null) {
-					String imageresult = fileUploadServices.uploadFile(image, "blog", title.replace(" ", "_"));
+					String imageresult = fileUploadServices.uploadFile(image, "blog", _globalFunService.replaceSpCharAndSpace(title));
 					objBlog.get().setImage("/public/download/blog/" + imageresult);
 				}
 			}
