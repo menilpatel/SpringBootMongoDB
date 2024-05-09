@@ -1,0 +1,31 @@
+[
+  {
+    $match: {
+      isPublished: true
+    }
+  },
+  {
+    $lookup: {
+      from: "users",
+      localField: "publishedBy",
+      foreignField: "_id",
+      as: "user"
+    }
+  },
+  {
+    $unwind: "$user"
+  },
+  {
+    $project: {
+      _id: 0,
+      title: "$title",
+      description: "$description",
+      image: "$image",
+      publishedBy: "$user.id",
+      firstName: "$user.firstName",
+      middleName: "$user.middleName",
+      lastName: "$user.lastName",
+      email: "$user.email"
+    }
+  }
+]
