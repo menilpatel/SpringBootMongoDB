@@ -50,7 +50,7 @@ public class AuthController {
 		try {
 			if (userService.checkUserExistOrNotByEmail(users.getEmail())) {
 				return new ResponseEntity<ObjectResponse>(new ObjectResponse(400, false,
-						"User already exist with email!", userService.saveUpdateUsers(users)), HttpStatus.OK);
+						"User already exist with email!", null), HttpStatus.OK);
 			}
 			users.setPassword(encoder.encode(users.getPassword()));
 			return new ResponseEntity<ObjectResponse>(

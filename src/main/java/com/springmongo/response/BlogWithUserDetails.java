@@ -1,6 +1,6 @@
 package com.springmongo.response;
 
-import com.alpidibackend.model.User;
+import com.springmongo.entity.Users;
 
 public class BlogWithUserDetails {
 	String id;
@@ -12,7 +12,7 @@ public class BlogWithUserDetails {
 	String publishedBy;
 	long createtimestamp = System.currentTimeMillis() / 1000L;
 	long updatetimestamp = System.currentTimeMillis() / 1000L;
-	User user;
+	Users user;
 
 	public String getId() {
 		return id;
@@ -86,11 +86,11 @@ public class BlogWithUserDetails {
 		this.updatetimestamp = updatetimestamp;
 	}
 
-	public User getUser() {
+	public Users getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Users user) {
 		this.user = user;
 	}
 

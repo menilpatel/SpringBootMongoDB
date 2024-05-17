@@ -20,8 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alpidibackend.exception.MyFileNotFoundException;
-
 @Service
 public class FileUploadServices {
 	@Value("")
@@ -97,10 +95,12 @@ public class FileUploadServices {
 			if (resource.exists()) {
 				return resource;
 			} else {
-				throw new MyFileNotFoundException("File not found " + fileName);
+				System.out.println("File not found " + fileName);
 			}
 		} catch (MalformedURLException ex) {
-			throw new MyFileNotFoundException("File not found " + fileName, ex);
+			System.out.println("File not found " + fileName + ex.getMessage());
+
 		}
+		return null;
 	}
 }
