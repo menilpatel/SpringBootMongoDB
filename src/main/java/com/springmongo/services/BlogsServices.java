@@ -3,9 +3,11 @@ package com.springmongo.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.LookupOperation;
 import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
@@ -29,44 +31,24 @@ public class BlogsServices {
 	}
 
 	public List<BlogWithUserDetails> _getAllBlogs() {
-		Aggregation aggregation = Aggregation.newAggregation(
-				Aggregation.match(Criteria.where("isPublished").is(true).and("isDeleted").is(false)),
-				Aggregation.project().andExpression("$_id").as("id").andExpression("title").as("title")
-						.andExpression("description").as("description").andExpression("image").as("image")
-						.andExpression("isPublished").as("isPublished").andExpression("isDeleted").as("isDeleted")
-						.andExpression("createtimestamp").as("createtimestamp").andExpression("updatetimestamp")
-						.as("updatetimestamp"));
+		AggregationOperation addFields = context -> new Document("$addFields",
+				new Document("publishedBy", new Document("$toObjectId", "$publishedBy")));
 
-		//System.out.println(aggregation);
+		AggregationOperation lookup = context -> new Document("$lookup", new Document("from", "users")
+				.append("localField", "publishedBy").append("foreignField", "_id").append("as", "user_info"));
+
+		AggregationOperation unwind = context -> new Document("$unwind", "$user_info");
+
+		AggregationOperation project = context -> new Document("$project",
+				new Document("title", 1).append("description", 1).append("image", 1).append("isPublished", 1)
+						.append("isDeleted", 1).append("createtimestamp", 1).append("updatetimestamp", 1)
+						.append("user", "$user_info"));
+
+		Aggregation aggregation = Aggregation.newAggregation(addFields, lookup, unwind, project);
+
 		AggregationResults<BlogWithUserDetails> results = mongoTemplate.aggregate(aggregation, "blogs",
 				BlogWithUserDetails.class);
 		return results.getMappedResults();
-
-//		LookupOperation lookupOperation = LookupOperation.newLookup()
-//                .from("users")
-//                .localField("publishedBy")
-//                .foreignField("_id")
-//                .as("user");
-//
-//        UnwindOperation unwindOperation = Aggregation.unwind("user");
-//
-//        Aggregation aggregation = Aggregation.newAggregation(
-//                Aggregation.match(Criteria.where("isPublished").is(true).and("isDeleted").is(false)),
-//                lookupOperation,
-//                unwindOperation,
-//                Aggregation.project()
-//                        .andExclude("_id")
-//                        .andInclude("title", "description", "image")
-//                        .and("user.id").as("publishedBy")
-//                        .and("user.firstName").as("firstName")
-//                        .and("user.middleName").as("middleName")
-//                        .and("user.lastName").as("lastName")
-//                        .and("user.email").as("email")
-//        );
-//
-//        return mongoTemplate.aggregate(aggregation, "blogs", BlogWithUserDetails.class).getMappedResults();
-
-		// return blogRepository.findByIsDeleted(false);
 	}
 
 	public List<Blogs> _getBlogsByAuthor(String userid) {
