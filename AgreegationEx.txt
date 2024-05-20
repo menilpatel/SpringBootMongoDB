@@ -1,0 +1,35 @@
+[
+  {
+    $addFields: {
+      publishedBy: {
+        $toObjectId: "$publishedBy"
+      } // Convert to ObjectId
+    }
+  },
+  {
+    $lookup: {
+      from: "users",
+      // The name of the user collection
+      localField: "publishedBy",
+      // Field from the blogs collection
+      foreignField: "_id",
+      // Field from the users collection
+      as: "user_info" // Output array field
+    }
+  },
+  {
+    $unwind: "$user_info" // Unwind the array to get a single object
+  },
+  {
+    $project: {
+      title: 1,
+      description: 1,
+      image: 1,
+      isPublished: 1,
+      isDeleted: 1,
+      createtimestamp: 1,
+      updatetimestamp: 1,
+      user: "$user_info" // Include the username field
+    }
+  }
+]
